@@ -1,8 +1,8 @@
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { toDoState } from "./atom";
-import DragbleCard from "./components/Drag/DragableCard";
+import { useForm } from "react-hook-form";
 import Board from "./components/Drag/Board";
 
 const Wrapper = styled.div`
@@ -22,15 +22,34 @@ const Boards = styled.div`
   grid-template-columns: repeat(3, 1fr);
 `;
 
+const BoardInput = styled.input`
+  padding: 0.5em;
+  margin: 0.5em;
+  color: "palevioletred";
+  background: papayawhip;
+  border: none;
+  border-radius: 3px;
+`;
+
+const Form = styled.form`
+  width: 100%;
+  input {
+    width: 100%;
+  }
+`;
+
+interface IForm {
+  newTodos: string;
+}
+
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  console.log("toDos : ", toDos);
   const onDragEnd = (info: DropResult) => {
     console.log(info);
-    const { destination, draggableId, source } = info;
+    const { destination, source } = info;
     if (!destination) return;
     if (destination?.droppableId === source.droppableId) {
-      // 1) sameBoard move 재 배치
+      // 1) 같은 보드에서는 재 배치
       setToDos((allBoards) => {
         const boardCopy = [...allBoards[source.droppableId]];
         const taskObj = boardCopy[source.index];
@@ -45,7 +64,7 @@ function App() {
         };
       });
     } else {
-      // 2) another Board move
+      // 2) 다른 보드에서는 이동
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
         const taskObj = sourceBoard[source.index];
@@ -62,8 +81,27 @@ function App() {
       });
     }
   };
+  const { register, setValue, handleSubmit } = useForm<IForm>();
+  const onValid = ({ newTodos }: IForm) => {
+    setToDos((prevToDo) => ({
+      ...prevToDo,
+      [newTodos]: [],
+    }));
+
+    setValue("newTodos", "");
+  };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
+      <Form onSubmit={handleSubmit(onValid)}>
+        <h1>
+          Input Todo Board
+          <BoardInput
+            {...register("newTodos", { required: true })}
+            type="text"
+            placeholder="set board"
+          ></BoardInput>
+        </h1>
+      </Form>
       <Wrapper>
         <Boards>
           {Object.keys(toDos).map((boardId) => (
