@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import DragableCard from "./DragableCard";
+import DragabbleCard from "./DragableCard";
 import { ItoDo } from "../../atom";
 import { useSetRecoilState } from "recoil";
 import { toDoState } from "../../atom";
@@ -94,9 +94,10 @@ function Board({ toDos, boardId }: IBoardProps) {
             {...magic.droppableProps}
           >
             {toDos.map((toDo, index) => (
-              <DragableCard
+              <DragabbleCard
                 key={toDo.id}
                 index={index}
+                boardId={boardId}
                 toDoId={toDo.id}
                 toDoText={toDo.text}
               />

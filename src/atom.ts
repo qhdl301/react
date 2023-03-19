@@ -1,4 +1,13 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
+import { recoilPersist } from "recoil-persist";
+
+const sessionStorage =
+  typeof window !== "undefined" ? window.sessionStorage : undefined;
+
+const { persistAtom } = recoilPersist({
+  key: "toDo_Session",
+  storage: sessionStorage,
+});
 
 export interface ItoDo {
   id: number;
@@ -16,4 +25,5 @@ export const toDoState = atom<ItoDoState>({
     doing: [],
     done: [],
   },
+  effects_UNSTABLE: [persistAtom],
 });
