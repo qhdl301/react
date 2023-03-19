@@ -1,4 +1,4 @@
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { toDoState } from "./atom";
@@ -104,7 +104,7 @@ function App() {
       </Form>
       <Wrapper>
         <Boards>
-          {Object.keys(toDos).map((boardId) => (
+          {Object.keys(toDos).map((boardId, index) => (
             <Board
               key={boardId}
               boardId={boardId}
